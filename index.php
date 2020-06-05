@@ -136,7 +136,7 @@
         load_data();
         function load_data(page){
           $.ajax({
-            url:"search.php",
+            url:"pagination.php",
               method: "POST",
               data: {page : page},
               success: function(data){
