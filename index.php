@@ -1,5 +1,39 @@
 <?php include('server.php')?>
 <?php include('session.php')?>
+<!-- <?php 
+  require_once("perpage.php");  
+  require_once("dbcontroller.php");
+  $db_handle = new DBController();
+  
+  if (!empty($_POST["search"])){
+    $search = $_POST['search'];
+    $orderby = " ORDER BY id desc"; 
+    $sql = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["search"]."%'";
+    $href = 'index.php';
+    $perPage = 2; 
+    $page = 1;
+    if(isset($_POST['page'])){
+      $page = $_POST['page'];
+    }
+    $start = ($page-1)*$perPage;
+    if($start < 0) $start = 0;
+    
+    $query =  $sql . $orderby .  " limit " . $start . "," . $perPage; 
+    $result = mysqli_query($conn,$query);
+    while($row=mysqli_fetch_assoc($result)) {
+      $resultset[] = $row;
+    }   
+    if(!empty($resultset))
+     $resultset[] = $resultset;
+  
+    if(!empty($result)) {
+      $result["perpage"] = showperpage($sql, $perPage, $href);
+    }
+   
+  }
+  
+
+?> -->
 
 <!DOCTYPE html>
   <html>
@@ -11,7 +45,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
-      <form class="index-form" method="post">
+      <form class="index-form" method="post" action="index.php" name="frmSearch">
 
         <?php  if (isset($_SESSION['email'])) : ?>
         <table style="width: 125%">
@@ -39,7 +73,7 @@
         
 
         <label> Search </label><input type="text" name="value" placeholder="Search">
-        <button type="submit" name="search"><i class="fa fa-search"></i></button><br><br>
+        <button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>
 
   
      
@@ -56,20 +90,24 @@
               <td class="index-th">Address</td>
               <td class="index-th" colspan="2">Action</td>
             </tr>
-            <?php while($row = mysqli_fetch_array($search_result)) :?>
+            <?php while($row = mysqli_fetch_array($result)) :?>
               <tr class="index-tr" >
                 <td class="index-td" style="text-align: right;"><?php echo $row["id"]; ?></td>
                 <td class="index-td"><?php echo $row["name"]; ?></td>
-                <td class="index-td"><?php echo $row["birthday"]; ?></td>
+                <td class="index-td"><?php echo $row["birthdy"]; ?></td>
                 <td class="index-td"><?php echo $row["education"]; ?></td>
                 <td class="index-td"><?php echo $row["it_skill"]; ?></td>
                 <td class="index-td"><?php echo $row["gender"]; ?></td>
                 <td class="index-td"><?php echo $row["department"]; ?></td>
                 <td class="index-td"><?php echo $row["address"]; ?></td>
-                <td class="index-td"> <a href="edit.php?edit_id=<?php echo $row['id']; ?>" onclick="editFunction()"> Edit </a> </td>
-                <td class="index-td"> <a href="index.php?del_id=<?php echo $row['id']; ?>" onclick="deleteFunction()"> Delete </a> </td>
+                <td class="index-td"> <a href="edit.php?edit_id=<?php echo $row["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
+                <td class="index-td"> <a href="index.php?del_id=<?php echo $row["id"];?>" onclick="deleteFunction()"> Delete </a> </td>
               </tr>
-            <?php endwhile; ?>
+        <?php endwhile; ?>
+          <tr>
+          <td colspan="6" align=right> <?php echo $output; ?></td>
+          </tr>
+           
           </table>
         <!-- <?php } else{
           echo "No result found";
@@ -98,7 +136,7 @@
         load_data();
         function load_data(page){
           $.ajax({
-            url:"pagination.php",
+            url:"search.php",
               method: "POST",
               data: {page : page},
               success: function(data){
