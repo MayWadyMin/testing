@@ -122,6 +122,11 @@ if (isset($_POST['reg_user'])) {
   }
 
 
+
+
+
+    
+
   if (isset($_POST['search'])){
     $value = $_POST['value'];
     $query = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'";
