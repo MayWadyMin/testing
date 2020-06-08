@@ -1,39 +1,6 @@
 <?php include('server.php')?>
 <?php include('session.php')?>
-<!-- <?php 
-  require_once("perpage.php");  
-  require_once("dbcontroller.php");
-  $db_handle = new DBController();
-  
-  if (!empty($_POST["search"])){
-    $search = $_POST['search'];
-    $orderby = " ORDER BY id desc"; 
-    $sql = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["search"]."%'";
-    $href = 'index.php';
-    $perPage = 2; 
-    $page = 1;
-    if(isset($_POST['page'])){
-      $page = $_POST['page'];
-    }
-    $start = ($page-1)*$perPage;
-    if($start < 0) $start = 0;
-    
-    $query =  $sql . $orderby .  " limit " . $start . "," . $perPage; 
-    $result = mysqli_query($conn,$query);
-    while($row=mysqli_fetch_assoc($result)) {
-      $resultset[] = $row;
-    }   
-    if(!empty($resultset))
-     $resultset[] = $resultset;
-  
-    if(!empty($result)) {
-      $result["perpage"] = showperpage($sql, $perPage, $href);
-    }
-   
-  }
-  
 
-?> -->
 
 <!DOCTYPE html>
   <html>
@@ -59,64 +26,79 @@
         <br><br>
         <?php endif ?>
 
-<!-- 
-         <?php $result = mysqli_query($conn,"SELECT * FROM add_user");?> 
+    <!--  <div id="pagination_data"></div>  -->   
 
-     
-          <div style="width: 132%">
-            <label> Search </label><input type="text" name="search_text" class="form-control" id="search_text" placeholder="Search By Name">
-          <button type="submit" name="search"><i class="fa fa-search"></i></button>
-          </div>
-          <table id="result" class="index-table"></table>
+<?php
+$record_per_page = 5 ;
+$page = '';
+$orderby = " ORDER BY id DESC";
+$output ='';   
+if (isset($_POST["page"])) {
+    $page = $_POST["page"];
+}else{
+    $page = 1;
+}
+$start_from = ($page - 1) * $record_per_page; ?>
+<label> Search </label><input type="text" name="value" placeholder="Search" >
+<button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>
 
-        <br> -->
-        
+<?php
+if (isset($_POST['search'])){
+    $value = $_POST['value'];
+    $sql = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ; 
+    $query =  $sql . $orderby .  " LIMIT " . $start_from . "," . $record_per_page; 
+    $search_result = mysqli_query($conn,$query);
+}else{
+    $query = "SELECT * FROM add_user ORDER BY id DESC LIMIT $start_from, $record_per_page";
+    $search_result = mysqli_query($conn,$query);
+} ?>
 
-        <label> Search </label><input type="text" name="value" placeholder="Search">
-        <button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>
+<table class="index-table">
+  <tr class="index-tr">
+  <td class="index-th">ID  </td>
+  <td class="index-th">Name</td>
+  <td class="index-th">Birthday</td>
+  <td class="index-th">Education</td>
+  <td class="index-th">IT Skill</td>
+  <td class="index-th">Gender</td>
+  <td class="index-th">Department</td>
+  <td class="index-th">Address</td>
+  <td class="index-th" colspan="2">Action</td>
+  </tr>
+              
+<?php while($row = mysqli_fetch_array($search_result)) : ?>
 
+  <tr class="index-tr">
+  <td class="index-td" style="text-align: right;"> <?php echo $row["id"]; ?> </td>
+  <td class="index-td"> <?php echo $row["name"]; ?> </td>
+  <td class="index-td"> <?php echo $row["birthday"]; ?> </td>
+  <td class="index-td"> <?php echo $row["education"]; ?> </td>
+  <td class="index-td"> <?php echo $row["it_skill"]; ?> </td>
+  <td class="index-td"> <?php echo $row["gender"]; ?> </td>
+  <td class="index-td"> <?php echo $row["department"]; ?> </td>
+  <td class="index-td"> <?php echo $row["address"]; ?> </td>
+  <td class="index-td"> <a href="edit.php?edit_id=<?php echo $row["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
+  <td class="index-td"> <a href="index.php?del_id=<?php echo $row["id"]; ?>" onclick="deleteFunction()"> Delete </a> </td>
+  </tr>
+<?php endwhile ?>
+
+</table><br/>
+
+<div id="pagination_data"></div>
+
+<!-- <?php
+  $page_query = "SELECT * FROM add_user ORDER BY id DESC";
+  $page_result = mysqli_query($conn, $page_query);
+  $total_records = mysqli_num_rows($page_result);
+  $total_pages = ceil($total_records / $record_per_page);
+  for($i=1; $i<=$total_pages; $i++ ){ 
+?>
   
-     
-       <!--  <?php if (mysqli_num_rows($result) > 0) { ?> -->
-          <table class="index-table" >
-            <tr class="index-tr">
-              <td class="index-th">ID  </td>
-              <td class="index-th">Name</td>
-              <td class="index-th">Birthday</td>
-              <td class="index-th">Education</td>
-              <td class="index-th">IT Skill</td>
-              <td class="index-th">Gender</td>
-              <td class="index-th">Department</td>
-              <td class="index-th">Address</td>
-              <td class="index-th" colspan="2">Action</td>
-            </tr>
-            <?php while($row = mysqli_fetch_array($search_result)) :?>
-              <tr class="index-tr" >
-                <td class="index-td" style="text-align: right;"><?php echo $row["id"]; ?></td>
-                <td class="index-td"><?php echo $row["name"]; ?></td>
-                <td class="index-td"><?php echo $row["birthday"]; ?></td>
-                <td class="index-td"><?php echo $row["education"]; ?></td>
-                <td class="index-td"><?php echo $row["it_skill"]; ?></td>
-                <td class="index-td"><?php echo $row["gender"]; ?></td>
-                <td class="index-td"><?php echo $row["department"]; ?></td>
-                <td class="index-td"><?php echo $row["address"]; ?></td>
-                <td class="index-td"> <a href="edit.php?edit_id=<?php echo $row["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
-                <td class="index-td"> <a href="index.php?del_id=<?php echo $row["id"];?>" onclick="deleteFunction()"> Delete </a> </td>
-              </tr>
-        <?php endwhile; ?>
-          <tr>
-          
-          </tr>
-           
-          </table>
-        <!-- <?php } else{
-          echo "No result found";
-        } ?> -->
-</div>
+  <span class='pagination_link' style='cursor:pointer; padding:6px; border: 1px solid blue;' id='<?php echo $i; ?>'><?php echo $i; ?></span>
 
-<br>
-      
-     <table class="index-table" id="pagination_data"></table>
+<?php } ?> -->
+
+
 
   </form>
    <script>
@@ -136,7 +118,7 @@
         load_data();
         function load_data(page){
           $.ajax({
-            url:"pagination.php",
+            url:"paginationOne.php",
               method: "POST",
               data: {page : page},
               success: function(data){
@@ -149,13 +131,13 @@
             var page = $(this).attr("id");
             load_data(page);
         });
-
+        
       });
 
 
   </script>
 
-   <script>
+  <!--  <script>
     $(document).ready(function(){
       $('#search_text').keyup(function(){
           var txt = $(this).val();
@@ -189,7 +171,7 @@
     
 
 
-  </script>
+  </script> -->
 
 
 

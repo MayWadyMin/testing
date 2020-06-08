@@ -121,7 +121,7 @@ if (isset($_POST['reg_user'])) {
             echo "<script>alert('Successfully!')</script>";
   }
 
-  if (isset($_POST['search'])){
+  /*if (isset($_POST['search'])){
     $value = $_POST['value'];
     $query = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'";
     $search_result = mysqli_query($conn,$query);
@@ -131,7 +131,7 @@ if (isset($_POST['reg_user'])) {
     $search_result = mysqli_query($conn,$query);
 
   }
-
+*/
 /*
   if (isset($_GET['pageno'])) {
     $pageno = $_GET['pageno'];

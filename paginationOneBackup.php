@@ -15,8 +15,8 @@ if (isset($_POST["page"])) {
     $start_from = ($page - 1) * $record_per_page;
        
 
-/*    $output.= '<label> Search </label><input type="text" name="value" placeholder="Search" >
-        <button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>';*/
+    $output.= '<label> Search </label><input type="text" name="value" placeholder="Search" >
+        <button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>';
 
 if (isset($_POST['search'])){
     $value = $_POST['value'];
