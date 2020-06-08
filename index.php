@@ -90,11 +90,11 @@
               <td class="index-th">Address</td>
               <td class="index-th" colspan="2">Action</td>
             </tr>
-            <?php while($row = mysqli_fetch_array($result)) :?>
+            <?php while($row = mysqli_fetch_array($search_result)) :?>
               <tr class="index-tr" >
                 <td class="index-td" style="text-align: right;"><?php echo $row["id"]; ?></td>
                 <td class="index-td"><?php echo $row["name"]; ?></td>
-                <td class="index-td"><?php echo $row["birthdy"]; ?></td>
+                <td class="index-td"><?php echo $row["birthday"]; ?></td>
                 <td class="index-td"><?php echo $row["education"]; ?></td>
                 <td class="index-td"><?php echo $row["it_skill"]; ?></td>
                 <td class="index-td"><?php echo $row["gender"]; ?></td>
@@ -105,7 +105,7 @@
               </tr>
         <?php endwhile; ?>
           <tr>
-          <td colspan="6" align=right> <?php echo $output; ?></td>
+          
           </tr>
            
           </table>

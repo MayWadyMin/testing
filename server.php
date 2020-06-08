@@ -121,12 +121,6 @@ if (isset($_POST['reg_user'])) {
             echo "<script>alert('Successfully!')</script>";
   }
 
-
-
-
-
-    
-
   if (isset($_POST['search'])){
     $value = $_POST['value'];
     $query = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'";
@@ -138,6 +132,21 @@ if (isset($_POST['reg_user'])) {
 
   }
 
+/*
+  if (isset($_GET['pageno'])) {
+    $pageno = $_GET['pageno'];
+  } else {
+    $pageno = 1;
+  }
+    $no_of_records_per_page = 10;
+    $offset = ($pageno-1) * $no_of_records_per_page;
+    $total_pages_sql = "SELECT COUNT(*) FROM add_user";
+    $result = mysqli_query($conn,$total_pages_sql);
+    $total_rows = mysqli_fetch_array($result)[0];
+    $total_pages = ceil($total_rows / $no_of_records_per_page);
+    $sql = "SELECT * FROM add_user LIMIT $offset, $no_of_records_per_page";
+    $res_data = mysqli_query($conn,$sql);
+*/
 
   /*if (isset($_GET['search'])) {
     $query = $_GET['search'];  
