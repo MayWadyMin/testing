@@ -36,7 +36,7 @@ if (isset($_POST['search'])){
   if(!empty($result)) {
     $result["perpage"] = showperpage($sql, $perPage, $href);
   }
-
+?>
 
 <!DOCTYPE html>
   <html>
