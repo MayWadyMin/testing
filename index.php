@@ -7,16 +7,18 @@
   
 
   
- if (isset($_POST['search'])){
+if (isset($_POST['search'])){
     $value = $_POST['value'];
-  $queryCondition = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ; 
-    $search_result = mysqli_query($conn,$queryCondition);
+    $queryCondition = " WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ;
+  /*$queryCondition = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ; 
+  $search_result = mysqli_query($conn,$queryCondition);*/
   }else{
-    $queryCondition = "SELECT * FROM add_user";
-    $search_result = mysqli_query($conn,$queryCondition);
+    $queryCondition = "";
+    /*$queryCondition = "SELECT * FROM add_user";
+    $search_result = mysqli_query($conn,$queryCondition);*/
   }
-  $orderby = " ORDER BY id desc"; 
-  $sql = "SELECT * FROM add_user " . $queryCondition;
+  $orderby = " ORDER BY id asc"; 
+  $sql = "SELECT * FROM add_user" . $queryCondition;
   $href = 'index.php';          
     
   $perPage = 2; 
@@ -30,10 +32,12 @@
   if($start < 0) $start = 0;
     
   $query =  $sql . $orderby .  " limit " . $start . "," . $perPage; 
-  $result = mysqli_query($conn,$query);
-  if(!empty($result)) {
+  $result = $db_handle->runQuery($query);
+  
+  /*if(!empty($result)) {*/
     $result["perpage"] = showperpage($sql, $perPage, $href);
-  }
+ /* }*/
+
 
   // var_dump($query);
   // exit();
@@ -84,28 +88,31 @@
   <td class="index-th" colspan="2">Action</td>
   </tr>
               
-<?php while($row = mysqli_fetch_array($search_result)) : ?>
+<?php if(!empty($result)) {
+            foreach($result as $k=>$v) {
+              if(is_numeric($k)) {
+          ?>
 
   <tr class="index-tr">
-  <td class="index-td" style="text-align: right;"> <?php echo $row["id"]; ?> </td>
-  <td class="index-td"> <?php echo $row["name"]; ?> </td>
-  <td class="index-td"> <?php echo $row["birthday"]; ?> </td>
-  <td class="index-td"> <?php echo $row["education"]; ?> </td>
-  <td class="index-td"> <?php echo $row["it_skill"]; ?> </td>
-  <td class="index-td"> <?php echo $row["gender"]; ?> </td>
-  <td class="index-td"> <?php echo $row["department"]; ?> </td>
-  <td class="index-td"> <?php echo $row["address"]; ?> </td>
-  <td class="index-td"> <a href="edit.php?edit_id=<?php echo $row["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
-  <td class="index-td"> <a href="index.php?del_id=<?php echo $row["id"]; ?>" onclick="deleteFunction()"> Delete </a> </td>
+  <td class="index-td" style="text-align: right;"> <?php echo $result[$k]["id"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["name"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["birthday"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["education"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["it_skill"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["gender"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["department"]; ?> </td>
+  <td class="index-td"> <?php echo $result[$k]["address"]; ?> </td>
+  <td class="index-td"> <a href="edit.php?edit_id=<?php echo $result[$k]["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
+  <td class="index-td"> <a href="index.php?del_id=<?php echo $result[$k]["id"]; ?>" onclick="deleteFunction()"> Delete </a> </td>
   </tr>
-<?php endwhile ?>
+<?php }}} ?>
 <?php if(isset($result["perpage"])) {
           ?>
           <tr>
           <td colspan="6" align=right> <?php echo $result["perpage"]; ?></td>
           </tr>
           <?php } ?>
-        <tbody>
+        
 
 </table><br/>
 
