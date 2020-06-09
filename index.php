@@ -1,6 +1,43 @@
 <?php include('server.php')?>
 <?php include('session.php')?>
+<?php
+  require_once("perpage.php");  
+  require_once("dbcontroller.php");
+  $db_handle = new DBController();
+  
 
+  
+ if (isset($_POST['search'])){
+    $value = $_POST['value'];
+  $queryCondition = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ; 
+    $search_result = mysqli_query($conn,$queryCondition);
+  }else{
+    $queryCondition = "SELECT * FROM add_user";
+    $search_result = mysqli_query($conn,$queryCondition);
+  }
+  $orderby = " ORDER BY id desc"; 
+  $sql = "SELECT * FROM add_user " . $queryCondition;
+  $href = 'index.php';          
+    
+  $perPage = 2; 
+  $page = 1;
+  if(isset($_POST['page'])){
+    $page = $_POST['page'];
+    // echo($page);
+    // exit();
+  }
+  $start = ($page-1)*$perPage;
+  if($start < 0) $start = 0;
+    
+  $query =  $sql . $orderby .  " limit " . $start . "," . $perPage; 
+  $result = mysqli_query($conn,$query);
+  if(!empty($result)) {
+    $result["perpage"] = showperpage($sql, $perPage, $href);
+  }
+
+  // var_dump($query);
+  // exit();
+?>
 
 <!DOCTYPE html>
   <html>
@@ -26,9 +63,74 @@
         <br><br>
         <?php endif ?>
 
+
     <!--  <div id="pagination_data"></div>  -->   
 
-<?php
+<label> Search </label><input type="text" name="value" placeholder="Search" >
+<button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><input type="reset" class="btnSearch" value="Reset" onclick="window.location='index.php'"><br><br>
+
+
+
+<table class="index-table">
+  <tr class="index-tr">
+  <td class="index-th">ID  </td>
+  <td class="index-th">Name</td>
+  <td class="index-th">Birthday</td>
+  <td class="index-th">Education</td>
+  <td class="index-th">IT Skill</td>
+  <td class="index-th">Gender</td>
+  <td class="index-th">Department</td>
+  <td class="index-th">Address</td>
+  <td class="index-th" colspan="2">Action</td>
+  </tr>
+              
+<?php while($row = mysqli_fetch_array($search_result)) : ?>
+
+  <tr class="index-tr">
+  <td class="index-td" style="text-align: right;"> <?php echo $row["id"]; ?> </td>
+  <td class="index-td"> <?php echo $row["name"]; ?> </td>
+  <td class="index-td"> <?php echo $row["birthday"]; ?> </td>
+  <td class="index-td"> <?php echo $row["education"]; ?> </td>
+  <td class="index-td"> <?php echo $row["it_skill"]; ?> </td>
+  <td class="index-td"> <?php echo $row["gender"]; ?> </td>
+  <td class="index-td"> <?php echo $row["department"]; ?> </td>
+  <td class="index-td"> <?php echo $row["address"]; ?> </td>
+  <td class="index-td"> <a href="edit.php?edit_id=<?php echo $row["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
+  <td class="index-td"> <a href="index.php?del_id=<?php echo $row["id"]; ?>" onclick="deleteFunction()"> Delete </a> </td>
+  </tr>
+<?php endwhile ?>
+<?php if(isset($result["perpage"])) {
+          ?>
+          <tr>
+          <td colspan="6" align=right> <?php echo $result["perpage"]; ?></td>
+          </tr>
+          <?php } ?>
+        <tbody>
+
+</table><br/>
+
+
+</form>
+   <script>
+      function editFunction() {
+        return confirm("Are you sure you want to edit!");
+      }
+      function deleteFunction() {
+        return confirm("Are you sure you want to delete!");
+      }
+
+  </script>
+
+
+  <script type="text/javascript"></script>
+
+
+    </body>
+
+  </html>
+
+
+<!-- <?php
 $record_per_page = 5 ;
 $page = '';
 $orderby = " ORDER BY id DESC";
@@ -39,7 +141,7 @@ if (isset($_POST["page"])) {
     $page = 1;
 }
 $start_from = ($page - 1) * $record_per_page; ?>
-<label> Search </label><input type="text" name="value" placeholder="Search" >
+<label> Search </label><input type="text" name="search_box" id="search_box" placeholder="Search" >
 <button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>
 
 <?php
@@ -85,7 +187,7 @@ if (isset($_POST['search'])){
 </table><br/>
 
 <div id="pagination_data"></div>
-
+ -->
 <!-- <?php
   $page_query = "SELECT * FROM add_user ORDER BY id DESC";
   $page_result = mysqli_query($conn, $page_query);
@@ -100,7 +202,7 @@ if (isset($_POST['search'])){
 
 
 
-  </form>
+  <!-- </form>
    <script>
       function editFunction() {
         return confirm("Are you sure you want to edit!");
@@ -112,30 +214,40 @@ if (isset($_POST['search'])){
   </script>
 
 
-  <script>
+  <script type="text/javascript"></script> -->
+
+
+  <!-- <script>
     
     $(document).ready(function(){
         load_data();
         function load_data(page){
           $.ajax({
-            url:"paginationOne.php",
+              url:"paginationOne.php",
               method: "POST",
-              data: {page : page},
+              data: {page : page, query : query},
               success: function(data){
                 $('#pagination_data').html(data);
               }
           });
         }
+        load_data(1);
 
-        $(document).on('click', '.pagination_link',function(){
-            var page = $(this).attr("id");
-            load_data(page);
+         $('#search_box').keyup(function(){
+             var query = $('#search_box').val();
+             load_data(1, query);
+         });
+
+        $(document).on('click', '.page_link',function(){
+            var page = $(this).data('page_number');
+            var query = $('#search_box').val();
+            load_data(page, query);
         });
         
       });
 
 
-  </script>
+  </script> -->
 
   <!--  <script>
     $(document).ready(function(){
@@ -174,10 +286,10 @@ if (isset($_POST['search'])){
   </script> -->
 
 
-
+<!-- 
 	  </body>
 
-  </html>
+  </html> -->
 
 
   
