@@ -113,13 +113,26 @@ if (isset($_POST['reg_user'])) {
     }
   }
 
+  if(isset($_GET['del_id'])){
+    $del_id = $_GET['del_id'];
+    $sql = "DELETE FROM add_user WHERE id=$del_id";
+    $result = mysqli_query($conn,$sql);
+    if(!empty($result)){
+      header("Location:index.php");
+    };
+  }
+
+
+
+/*  //Delete
  if(isset($_GET['del_id'])){
             $del_id = $_GET['del_id'];
             $sql = "DELETE FROM add_user WHERE id=$del_id";
             mysqli_query($conn,$sql);
             
             echo "<script>alert('Successfully!')</script>";
-  }
+  }*/
+
 
   /*if (isset($_POST['search'])){
     $value = $_POST['value'];

@@ -7,27 +7,27 @@ $page = '';
 $orderby = " ORDER BY id DESC";
 $output ='';   
 
-if (isset($_POST["page"])) {
-    $page = $_POST["page"];
+if ($_POST['page'] > 1 ) {
+    $start = ($_POST['page'] - 1) * $limit ;
+    $page = $_POST['page'];
 }else{
-    $page = 1;
+    $start = 0;;
 }
     $start_from = ($page - 1) * $record_per_page;
-       
 
-/*    $output.= '<label> Search </label><input type="text" name="value" placeholder="Search" >
+/*    $output.= '<label> Search </label><input type="text" name="search_box" placeholder="Search" >
         <button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><br><br>';*/
 
-if (isset($_POST['search'])){
-    $value = $_POST['value'];
-    $sql = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ; 
+if (isset($_POST['query'])){
+    
+    $sql = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["query"]."%'" ; 
     $query =  $sql . $orderby .  " LIMIT " . $start_from . "," . $record_per_page; 
     $search_result = mysqli_query($conn,$query);
 }else{
     $query = "SELECT * FROM add_user ORDER BY id DESC LIMIT $start_from, $record_per_page";
     $search_result = mysqli_query($conn,$query);
 }
-    
+
     $output.= '<table class="index-table">
             <tr class="index-tr">
               <td class="index-th">ID  </td>
@@ -40,7 +40,7 @@ if (isset($_POST['search'])){
               <td class="index-th">Address</td>
               <td class="index-th" colspan="2">Action</td>
             </tr>';
-              
+
 while($row = mysqli_fetch_array($search_result)) :
     $output .= '
                 <tr class="index-tr">
@@ -67,4 +67,5 @@ endwhile;
          $output.= "<span class='pagination_link' style='cursor:pointer; padding:6px; border: 1px solid blue;' id='".$i."'>".$i."</span>";
      }
       echo $output;
+
 ?>

@@ -8,7 +8,7 @@
 
   
 if (isset($_POST['search'])){
-    $value = $_POST['value'];
+    /*$value = $_POST['value'];*/
     $queryCondition = " WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ;
   /*$queryCondition = "SELECT * FROM add_user WHERE CONCAT(id, name, birthday, education, it_skill, gender, department, address) LIKE '%".$_POST["value"]."%'" ; 
   $search_result = mysqli_query($conn,$queryCondition);*/
@@ -18,15 +18,14 @@ if (isset($_POST['search'])){
     $search_result = mysqli_query($conn,$queryCondition);*/
   }
   $orderby = " ORDER BY id asc"; 
-  $sql = "SELECT * FROM add_user" . $queryCondition;
+  $sql = "SELECT * FROM add_user " . $queryCondition;
   $href = 'index.php';          
     
   $perPage = 2; 
   $page = 1;
   if(isset($_POST['page'])){
     $page = $_POST['page'];
-    // echo($page);
-    // exit();
+
   }
   $start = ($page-1)*$perPage;
   if($start < 0) $start = 0;
@@ -34,14 +33,10 @@ if (isset($_POST['search'])){
   $query =  $sql . $orderby .  " limit " . $start . "," . $perPage; 
   $result = $db_handle->runQuery($query);
   
-  /*if(!empty($result)) {*/
+  if(!empty($result)) {
     $result["perpage"] = showperpage($sql, $perPage, $href);
- /* }*/
+  }
 
-
-  // var_dump($query);
-  // exit();
-?>
 
 <!DOCTYPE html>
   <html>
@@ -71,11 +66,12 @@ if (isset($_POST['search'])){
     <!--  <div id="pagination_data"></div>  -->   
 
 <label> Search </label><input type="text" name="value" placeholder="Search" >
-<button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button><input type="reset" class="btnSearch" value="Reset" onclick="window.location='index.php'"><br><br>
+<button type="submit" name="search" class="btnSearch"><i class="fa fa-search"></i></button> <input type="reset"  value="Reset" onclick="window.location='index.php'"><br><br>
 
 
 
 <table class="index-table">
+  <thead>
   <tr class="index-tr">
   <td class="index-th">ID  </td>
   <td class="index-th">Name</td>
@@ -87,54 +83,46 @@ if (isset($_POST['search'])){
   <td class="index-th">Address</td>
   <td class="index-th" colspan="2">Action</td>
   </tr>
-              
+  </thead>
+  <tbody>        
 <?php if(!empty($result)) {
-            foreach($result as $k=>$v) {
-              if(is_numeric($k)) {
-          ?>
+  foreach($result as $k=>$v) {
+    if(is_numeric($k)) { ?>
 
-  <tr class="index-tr">
-  <td class="index-td" style="text-align: right;"> <?php echo $result[$k]["id"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["name"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["birthday"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["education"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["it_skill"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["gender"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["department"]; ?> </td>
-  <td class="index-td"> <?php echo $result[$k]["address"]; ?> </td>
-  <td class="index-td"> <a href="edit.php?edit_id=<?php echo $result[$k]["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
-  <td class="index-td"> <a href="index.php?del_id=<?php echo $result[$k]["id"]; ?>" onclick="deleteFunction()"> Delete </a> </td>
+      <tr class="index-tr">
+      <td class="index-td" style="text-align: right;"> <?php echo $result[$k]["id"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["name"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["birthday"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["education"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["it_skill"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["gender"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["department"]; ?> </td>
+      <td class="index-td"> <?php echo $result[$k]["address"]; ?> </td>
+      <td class="index-td"> <a href="edit.php?edit_id=<?php echo $result[$k]["id"]; ?>" onclick="editFunction()"> Edit </a> </td>
+      <td class="index-td"> <a href="index.php?del_id=<?php echo $result[$k]["id"]; ?>" onclick="deleteFunction()"> Delete </a> </td>
+      </tr>
+    <?php }
+  }
+} 
+if(isset($result["perpage"])) { ?>
+  <tr>
+  <td colspan="6" align=right> <?php echo $result["perpage"]; ?></td>
   </tr>
-<?php }}} ?>
-<?php if(isset($result["perpage"])) {
-          ?>
-          <tr>
-          <td colspan="6" align=right> <?php echo $result["perpage"]; ?></td>
-          </tr>
-          <?php } ?>
-        
-
-</table><br/>
-
-
+<?php } ?>
+</tbody>
+</table>
 </form>
-   <script>
-      function editFunction() {
-        return confirm("Are you sure you want to edit!");
-      }
-      function deleteFunction() {
-        return confirm("Are you sure you want to delete!");
-      }
-
-  </script>
-
-
-  <script type="text/javascript"></script>
-
-
-    </body>
-
-  </html>
+<script>
+  /*function editFunction() {
+    return confirm("Are you sure you want to edit!");
+  }*/
+  function deleteFunction() {
+    return confirm("Are you sure you want to delete!");
+  }
+</script>
+<script type="text/javascript"></script>
+</body>
+</html>
 
 
 <!-- <?php
